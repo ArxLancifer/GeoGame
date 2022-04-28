@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="boardStyle.css">
+    <title>Document</title>
+</head>
+<span class="highscore">Highest Score&#10153;</span>
+<div class="DMG"></div>
+<div class="HEAL"></div>
+
+<body class="clearfix">
+    <div class="warning"></div>
+    <div class="foundem">
+        <p>Good job!!! You found them all!</p>
+        <button class="PlayMore">Play More</button>
+        <button class="Save">Save</button>
+    </div>
+    <div class="loser">
+        <p>Sorry you can try again</p>
+        <button class="KeepPlaying">Next</button>
+    </div>
+    <div class="ok_cancel">
+        <div class="warningbtns">
+            <p class="warning_msg">You will lose all your POINTS procceed?</p>
+            <button class="ok">ok</button>
+            <button class="cancel">cancel</button>
+        </div>
+    </div>
+
+    <div class="globeOverlay">
+        <p>How good are you in GEOGRAPHY?<br>
+            Do you want to test your skills?
+            Click on BUTTON to START!
+        </p>
+        <div class="startGame">START</div>
+        <div class="globe"></div>
+    </div>
+    <section class="sidebar">
+        <h3>Find neightbours</h3>
+        <div class="round">
+            <span>Round</span>
+            <span>1</span>
+        </div>
+        <div class="score">
+            <span>Score</span>
+            <span>0</span>
+        </div>
+        <div class="nextCountry">
+            <p>Next Country</p>
+        </div>
+        <div class="newGame">New Game</div>
+        <div class="Jabaite">Its a BAIT!!!</div>
+
+    </section>
+
+    <main>
+        <section class="randomShuffled">
+
+            <div class="randomCountry">
+                <span id="my-country" class="emojiFlag"></span>
+                <h4>Country Name</h4>
+            </div>
+
+            <div class="progressBar">
+                <div class="progressBarBG"></div>
+            </div>
+        </section>
+        <section class="countriesBoard">
+        </section>
+    </main>
+    <script type="module" defer src="GeoGame.js"></script>
+</body>
+
+
+</html>
