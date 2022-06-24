@@ -1,15 +1,15 @@
-import { countryObjects, shuffleArray, country2emoji2 } from "./countries.js";
+import { countryObjects, shuffleArray, country2emoji } from "./countries.js";
 
 const countriesArray = [...countryObjects];
 const shuffleCountries = shuffleArray;
-const countryFlag = country2emoji2;
-const nextCountryBTN = document.querySelector(".nextCountry"); //Next Country Button
-const newGameBTN = document.querySelector(".newGame"); //New Game Button
-const currentCountry = document.querySelectorAll(".randomCountry *"); // Current Country Flage & Name
-const roundCounter = document.querySelectorAll(".round > span")[1]; //Round
-const scoreCounter = document.querySelectorAll(".score > span")[1]; //Score
-const startGame = document.querySelector(".startGame"); //START GAME BUTTON
-const globeOverlay = document.querySelector(".globeOverlay"); //GLOBE OVERLAY SPINNING EARTH
+const countryFlag = country2emoji;
+const nextCountryBTN = document.querySelector(".nextCountry");
+const newGameBTN = document.querySelector(".newGame"); 
+const currentCountry = document.querySelectorAll(".randomCountry *"); 
+const roundCounter = document.querySelectorAll(".round > span")[1]; 
+const scoreCounter = document.querySelectorAll(".score > span")[1]; 
+const startGame = document.querySelector(".startGame"); 
+const globeOverlay = document.querySelector(".globeOverlay"); 
 const countriesBoard = document.querySelector(".countriesBoard");
 const flagContainer = document.createElement("div");
 const flag = document.createElement("span");
@@ -23,12 +23,11 @@ const keepPlaying = document.querySelector(".KeepPlaying");
 const baitButton = document.querySelector(".Jabaite");
 const HEAL = document.querySelector(".HEAL");
 const DMG = document.querySelector(".DMG");
-let randomCountryObj = 0;
 let ScoreVariable = 0;
-let RoundVariable = 1;
+let Round = 1;
 let validFlags = 0;
 let invalidFlags = 0;
-let bait = false;
+let isBait = false;
 
 let highScore = 0;
 if (JSON.parse(localStorage.getItem("MyPoints"))) {
@@ -44,11 +43,6 @@ if (JSON.parse(localStorage.getItem("MyPoints"))) {
   );
 }
 
-/*
-*****************************************************
-    EVENT LISTENERS
-*****************************************************
-*/
 startGame.addEventListener("click", () => {
   globeOverlay.classList.add("fadeOut");
   setTimeout(() => {
@@ -56,53 +50,42 @@ startGame.addEventListener("click", () => {
   }, 1500);
 });
 
-/*
-*****************************************************
-    FUNCTIONS
-*****************************************************
-*/
-/*RANDOM FLAG*/
-const randomGen = () => Math.ceil(Math.random() * 250);
-/*FETCH RANDOM COUNTRY*/
-async function randomCountry() {
-  let randomCountryTemp = countriesArray[randomGen()].code;
-  let countryObject = await fetch(
-    `https://restcountries.com/v3.1/alpha/${randomCountryTemp}`
-  )
-    .then((resp) => resp.json())
-    .then((data) => {
-      return data;
-    });
 
-  randomCountryObj = countryObject;
+async function fetchRandomCountry() {
+  let countryCode = getCountryCode();
+  let fetchedCountryObject = await fetch(`https://restcountries.com/v3.1/alpha/${countryCode}`);
+  const fetchedCountryData = await fetchedCountryObject.json(); 
+  return fetchedCountryData;
 }
 
-function runGame() {
-  randomCountry()
-    .then(() => {
-      currentCountry[0].textContent = `${country2emoji2(
-        randomCountryObj[0].altSpellings[0]
-      )}`;
-      currentCountry[1].textContent = `${randomCountryObj[0].name.common}`;
-    })
-    .then(() => {
-      createNeightbours();
-    });
+function getCountryCode() {
+  const randomNumber = randomGen();
+  
+  return countriesArray[randomNumber].code;
+};
+
+function randomGen() {
+  return Math.ceil(Math.random() * 250);
+};
+
+async function runGame() {
+  let fetchedCountryData = await fetchRandomCountry()
+  currentCountry[0].textContent = `${country2emoji(fetchedCountryData[0].altSpellings[0])}`;
+  currentCountry[1].textContent = `${fetchedCountryData[0].name.common}`
+  createNeightbours();
 }
 runGame();
-function createNeightbours() {
-  let bordersArray = randomCountryObj[0].borders;
+async function createNeightbours() {
+   let bordersArray = await neightboursArray()
   let notNeightboursArray = [];
   let boardArray = [];
-  if (bordersArray == undefined) {
-    bait = true;
-
-    bordersArray = [];
+  if (bordersArray.length === 0) {  // Refactore to function
+    isBait = true;
     for (let i = 0; i <= 8; i++) {
       notNeightboursArray.push(countriesArray[randomGen()].code);
     }
-  } else {
-    bait = false;
+  } else { // Refactore to function
+    isBait = false;
 
     for (let i = 0; i < bordersArray.length; i++) {
       notNeightboursArray.push(countriesArray[randomGen()].code);
@@ -111,6 +94,8 @@ function createNeightbours() {
       ).code; // with code3 country , so i did change that.
     }
   }
+
+  
 
   boardArray = [...bordersArray, ...notNeightboursArray];
   shuffleArray(boardArray);
@@ -123,7 +108,7 @@ function createNeightbours() {
       ? "emojiFlag neightbour"
       : "emojiFlag not_neightbour";
 
-    flagSpan.textContent = `${country2emoji2(country)}`;
+    flagSpan.textContent = `${country2emoji(country)}`;
     countryName.textContent = `${
       countriesArray.find((countryObj) => countryObj.code === country).name
     }`;
@@ -164,15 +149,19 @@ function createNeightbours() {
     countriesBoard.appendChild(flagDiv);
   });
 }
-
+async function neightboursArray(emptyNeightboursArray){
+    let randomCountryObj = await fetchRandomCountry() 
+    console.log(randomCountryObj);
+  return randomCountryObj[0].borders || [];
+}
 nextCountryBTN.addEventListener("click", () => {
   countriesBoard.innerHTML = "";
   runGame();
-  RoundVariable++;
-  roundCounter.textContent = RoundVariable;
+  Round++;
+  roundCounter.textContent = Round;
   validFlags = 0;
   invalidFlags = 0;
-  bait = false;
+  isBait = false;
 });
 
 newGameBTN.addEventListener("click", () => {
@@ -189,9 +178,9 @@ okbtn.addEventListener("click", () => {
   progressBar.style.width = "0%";
   validFlags = 0;
   invalidFlags = 0;
-  bait = false;
+  isBait = false;
   ScoreVariable = 0;
-  RoundVariable = 0;
+  Round = 0;
   runGame();
 });
 cancelbtn.addEventListener("click", () => {
@@ -206,9 +195,9 @@ playMore.addEventListener("click", () => {
   progressBar.style.width = "0%";
   validFlags = 0;
   invalidFlags = 0;
-  RoundVariable++;
-  roundCounter.textContent = RoundVariable;
-  bait = false;
+  Round++;
+  roundCounter.textContent = Round;
+  isBait = false;
   runGame();
 });
 save.addEventListener("click", () => {
@@ -236,24 +225,24 @@ keepPlaying.addEventListener("click", () => {
   progressBar.style.width = "0%";
   validFlags = 0;
   invalidFlags = 0;
-  RoundVariable++;
-  roundCounter.textContent = RoundVariable;
-  bait = false;
+  Round++;
+  roundCounter.textContent = Round;
+  isBait = false;
   runGame();
 });
 
 baitButton.addEventListener("click", () => {
-  if (bait === true) {
+  if (isBait === true) {
     ScoreVariable += 10;
     scoreCounter.textContent = ScoreVariable;
     countriesBoard.innerHTML = "";
-    DMG_HEAL(bait);
+    DMG_HEAL(isBait);
     runGame();
   } else {
     ScoreVariable -= 20;
     scoreCounter.textContent = ScoreVariable;
     countriesBoard.innerHTML = "";
-    DMG_HEAL(bait);
+    DMG_HEAL(isBait);
     runGame();
   }
 });

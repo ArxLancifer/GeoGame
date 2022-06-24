@@ -1,22 +1,21 @@
-// shuffle array https://medium.com/@nitinpatel_20236/how-to-shuffle-correctly-shuffle-an-array-in-javascript-15ea3f84bfb
-// επιστρέφει τον πίνακα array με τα ίδια στοιχεία σε τυχαίες θέσεις
-// χρειάζεται π.χ. για την επιλογή μιας τυχαίας χώρας ή τυχαίων γειτόνων
 export function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * i);
     const temp = array[i];
     array[i] = array[j];
     array[j] = temp;
-  }
+  };
   return array;
-}
+};
 
 // Returns a flag emoji from a 2-letter country code
-export function country2emoji2(country_code) {
+export function country2emoji(country_code) {
   const OFFSET = 127397;
   const codeArray = Array.from(country_code.toUpperCase());
-  return String.fromCodePoint(...codeArray.map((c) => c.charCodeAt() + OFFSET));
-}
+  return String.fromCodePoint(...codeArray.map(function(c) {
+    return c.charCodeAt() + OFFSET;
+  }));  
+};
 
 // Data taken from https://gist.github.com/incredimike/1469814
 
