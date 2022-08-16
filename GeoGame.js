@@ -54,7 +54,7 @@ startGame.addEventListener("click", () => {
 async function fetchRandomCountry() {
   let countryCode = getCountryCode();
   let fetchedCountryObject = await fetch(`https://restcountries.com/v3.1/alpha/${countryCode}`);
-  const fetchedCountryData = await fetchedCountryObject.json(); 
+  const fetchedCountryData = await fetchedCountryObject.json();
   return fetchedCountryData;
 }
 
@@ -70,13 +70,14 @@ function randomGen() {
 
 async function runGame() {
   let fetchedCountryData = await fetchRandomCountry()
+  const neightboursArray = fetchedCountryData[0].borders || [];
   currentCountry[0].textContent = `${country2emoji(fetchedCountryData[0].altSpellings[0])}`;
   currentCountry[1].textContent = `${fetchedCountryData[0].name.common}`
-  createNeightbours();
+  createNeightbours(neightboursArray);
 }
 runGame();
-async function createNeightbours() {
-   let bordersArray = await neightboursArray()
+async function createNeightbours(neightboursArray) {
+   let bordersArray = neightboursArray;
   let notNeightboursArray = [];
   let boardArray = [];
   if (bordersArray.length === 0) {  // Refactore to function
@@ -151,7 +152,6 @@ async function createNeightbours() {
 }
 async function neightboursArray(emptyNeightboursArray){
     let randomCountryObj = await fetchRandomCountry() 
-    console.log(randomCountryObj);
   return randomCountryObj[0].borders || [];
 }
 nextCountryBTN.addEventListener("click", () => {
